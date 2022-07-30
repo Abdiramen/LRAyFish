@@ -1,9 +1,22 @@
 [package]
-name = "LRAyFish"
+name = "lray_fish" # LRAyFish
 version = "0.1.0"
 authors = ["Abdirahman Ahmed Osman <abdirahman.osmanthus@gmail.com>"]
 edition = "2018"
 
+[lib]
+name = "cartilage"
+path = "src/lib.rs"
+
+[[bin]]
+name = "lray_fish" # LRAyFish
+path = "src/main.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+csv = "1.1"
+geocoding = "0.4.0"
+diesel = { version = "1.4.8", features = ["postgres"] }
+dotenv = "0.15.0"
+dotenv_codegen = "0.15.0" 
