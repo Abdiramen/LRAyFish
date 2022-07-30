@@ -1,2 +1,5 @@
 /target
 *.csv
+*.env
+*.history
+shell.nix
