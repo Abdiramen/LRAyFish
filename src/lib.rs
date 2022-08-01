@@ -29,6 +29,16 @@ pub fn batch_save_parcel(conn: PgConnection, entries: Vec<Parcel>) -> usize {
         .expect("Error batch saving posts")
 }
 
+use geocoding::{Opencage/*,Coordinate, Forward, Point*/};
+
+pub fn get_open_cage_connection<'a>() -> Opencage<'a> {
+    dotenv().ok();
+
+    let open_cage_api_key = env::var("OPEN_CAGE_API_KEY")
+        .expect("OPEN_CAGE_API_KEY must be set");
+    return Opencage::new(open_cage_api_key);
+}
+
 extern crate csv;
 
 use std::error::Error;
