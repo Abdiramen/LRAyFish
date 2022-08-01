@@ -14,6 +14,24 @@ pub enum Usage {
     VacantLot
 }
 
+use std::str::FromStr;
+impl FromStr for Usage {
+    type Err = ();
+
+    fn from_str(input: &str) -> Result<Usage, Self::Err> {
+        match input {
+            "Commercial" => Ok(Usage::Commercial),
+            "Condominium" => Ok(Usage::Condominium),
+            "Garage" => Ok(Usage::Garage),
+            "Industrial" => Ok(Usage::Industrial),
+            "Mixed" => Ok(Usage::Mixed),
+            "Residential" => Ok(Usage::Residential),
+            "VacantLot" => Ok(Usage::VacantLot),
+            _ => Err(()),
+        }
+    }
+}
+
 use std::io::Write;
 
 use diesel::backend::Backend;
@@ -52,16 +70,20 @@ impl FromSql<UsageType, Pg> for Usage {
     }
 }
 
-#[derive(Queryable)]
+#[derive(Queryable,Insertable,Debug)]
 pub struct Parcel {
     pub id: i64,
     pub address: String,
-    pub streetname: String,
+    pub street_name: String,
     pub front_length: i64,
     pub side_length: i64,
     pub square_feet: i64,
-    pub usage: Usage
+    pub usage: Usage,
+    pub lattitude: Option<f64>,
+    pub longitude: Option<f64>,
 }
+
+use super::schema::parcels;
 
 pub mod exports {
     pub use super::UsageType as Usage;

@@ -12,4 +12,9 @@ fn main() {
     let results = parcels.limit(5)
         .load::<Parcel>(&connection)
         .expect("Error loading parcels");
+    println!("Displaying Parcels");
+    for r in results {
+        println!("id: {}", r.id);
+        println!("address: {} {}", r.address, r.street_name);
+    }
 }
