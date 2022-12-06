@@ -2,8 +2,8 @@
 #[diesel(postgres_type(name = "Usage"))]
 pub struct UsageType;
 
-#[derive(Debug, FromSqlRow, AsExpression)]
-#[sql_type = "UsageType"]
+#[derive(Debug, FromSqlRow, Clone, Copy, AsExpression)]
+#[diesel(sql_type = UsageType)]
 pub enum Usage {
     Commercial,
     Condominium,
@@ -76,7 +76,7 @@ where
     }
 }
 
-#[derive(Queryable,Insertable,Debug)]
+#[derive(Queryable,Identifiable,Insertable,AsChangeset,Debug)]
 pub struct Parcel {
     pub id: i64,
     pub address: String,
@@ -88,6 +88,14 @@ pub struct Parcel {
     pub lattitude: Option<f64>,
     pub longitude: Option<f64>,
 }
+
+#[derive(AsChangeset)]
+#[diesel(table_name = parcels)]
+pub struct GPSForm {
+    pub longitude: Option<f64>,
+    pub lattitude: Option<f64>,
+}
+
 
 use super::schema::parcels;
 
