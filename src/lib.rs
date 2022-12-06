@@ -20,12 +20,12 @@ pub fn establish_connection() -> PgConnection {
 }
 
 use self::models::{Parcel, Usage};
-pub fn batch_save_parcel(conn: PgConnection, entries: Vec<Parcel>) -> usize {
+pub fn batch_save_parcel(conn: &mut PgConnection, entries: Vec<Parcel>) -> usize {
     use schema::parcels::dsl::*;
 
     diesel::insert_into(parcels)
         .values(&entries)
-        .execute(&conn)
+        .execute(conn)
         .expect("Error batch saving posts")
 }
 

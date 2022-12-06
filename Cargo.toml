@@ -20,7 +20,7 @@ csv = "1.1"
 clap = { version = "3.2.16", features = ["derive"] }
 geocoding = "0.4.0"
 # ORM
-diesel = { version = "1.4.8", features = ["postgres"] }
+diesel = { version = "2.0.2", features = ["postgres"] }
 # dotfile handler
 dotenv = "0.15.0"
 dotenv_codegen = "0.15.0" 

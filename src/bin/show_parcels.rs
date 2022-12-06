@@ -8,9 +8,9 @@ use self::diesel::prelude::*;
 fn main() {
     use cartilage::schema::parcels::dsl::*;
 
-    let connection = establish_connection();
+    let connection = &mut establish_connection();
     let results = parcels.limit(5)
-        .load::<Parcel>(&connection)
+        .load::<Parcel>(connection)
         .expect("Error loading parcels");
     println!("Displaying Parcels");
     for r in results {

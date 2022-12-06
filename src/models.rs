@@ -1,5 +1,5 @@
 #[derive(SqlType)]
-#[postgres(type_name = "Usage")]
+#[diesel(postgres_type(name = "Usage"))]
 pub struct UsageType;
 
 #[derive(Debug, FromSqlRow, AsExpression)]
@@ -34,12 +34,12 @@ impl FromStr for Usage {
 
 use std::io::Write;
 
-use diesel::backend::Backend;
+use diesel::pg::Pg;
 use diesel::serialize::{self, IsNull, Output, ToSql};
 
-impl<Db: Backend> ToSql<UsageType, Db> for Usage {
-    fn to_sql<W: Write>(&self, out: &mut Output<W, Db>) -> serialize::Result {
-        match *self {
+impl ToSql<UsageType, Pg> for Usage {
+    fn to_sql<'b>(&'b self, out: &mut Output<'b, '_, Pg>) -> serialize::Result {
+        match self {
             Usage::Commercial => out.write_all(b"Commercial")?,
             Usage::Condominium => out.write_all(b"Condominium")?,
             Usage::Garage => out.write_all(b"Garage")?,
@@ -52,19 +52,25 @@ impl<Db: Backend> ToSql<UsageType, Db> for Usage {
     }
 }
 
+use diesel::backend;
+use diesel::backend::Backend;
 use diesel::deserialize::{self, FromSql};
-use diesel::pg::Pg;
+use diesel::sql_types::Text;
 
-impl FromSql<UsageType, Pg> for Usage {
-    fn from_sql(bytes: Option<&<Pg as Backend>::RawValue>) -> deserialize::Result<Self> {
-        match not_none!(bytes) {
-            b"Commercial" => Ok(Usage::Commercial),
-            b"Condominium" => Ok(Usage::Condominium),
-            b"Garage" => Ok(Usage::Garage),
-            b"Industrial" => Ok(Usage::Industrial),
-            b"Mixed" => Ok(Usage::Mixed),
-            b"Residential" => Ok(Usage::Residential),
-            b"VacantLot" => Ok(Usage::VacantLot),
+impl<Db> FromSql<UsageType, Db> for Usage
+where
+    Db: Backend,
+    String: FromSql<Text, Db>,
+{
+    fn from_sql(bytes: backend::RawValue<Db>) -> deserialize::Result<Self> {
+        match String::from_sql(bytes)?.as_str() {
+            "Commercial" => Ok(Usage::Commercial),
+            "Condominium" => Ok(Usage::Condominium),
+            "Garage" => Ok(Usage::Garage),
+            "Industrial" => Ok(Usage::Industrial),
+            "Mixed" => Ok(Usage::Mixed),
+            "Residential" => Ok(Usage::Residential),
+            "VacantLot" => Ok(Usage::VacantLot),
             _ => Err("Unrecognize enum variant".into()),
         }
     }

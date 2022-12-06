@@ -3,7 +3,6 @@ extern crate cartilage;
 
 use self::cartilage::*;
 use self::models::Parcel;
-use self::diesel::prelude::*;
 
 use clap::Parser;
 
@@ -15,12 +14,10 @@ struct Args {
 }
 
 fn main() {
-    use cartilage::schema::parcels::dsl::*;
-
     let args = Args::parse();
     let entries: Vec<Parcel> = get_csv(args.file_path).unwrap();
 
-    let connection = establish_connection();
-    batch_save_parcel(connection, entries);
+    let mut connection = establish_connection();
+    batch_save_parcel(&mut connection, entries);
 
 }
